@@ -107,12 +107,11 @@ const HeroSection = () => {
   const canvasRef = useRef(null);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    const canvas = document.getElementById('your-canvas-id') as HTMLCanvasElement | null;
+if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
+const ctx = canvas.getContext('2d');
+if (!ctx) return;
     const resizeCanvas = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
