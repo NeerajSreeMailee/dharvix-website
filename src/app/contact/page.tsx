@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 
 // Utility function for smooth scrolling
-const scrollToSection = (id) => {
+const scrollToSection = (id: string) => {
   const element = document.getElementById(id);
   if (element) {
     element.scrollIntoView({ behavior: 'smooth' });
