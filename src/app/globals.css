@@ -1,6 +1,6 @@
 @font-face {
-  font-family: 'LOGOFONT';
-  src: url('../assets/HIMALAYA.TTF') format('truetype');
+  font-family: "LOGOFONT";
+  src: url("../assets/HIMALAYA.TTF") format("truetype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -8,9 +8,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-
 /* testing */
-
 
 @custom-variant dark (&:is(.dark *));
 
@@ -139,45 +137,50 @@
   }
 }
 
-header{
+header {
   max-height: 20vh;
 }
-.hero-section{
+.hero-section {
   min-height: 80vh;
 }
 
-
 .custom-himalaya {
-      font-family: 'LOGOFONT', sans-serif;
-      padding-top: 8px;
+  font-family: "LOGOFONT", sans-serif;
+  padding-top: 8px;
 }
 
-html{
+html {
   scroll-behavior: smooth;
-  scroll-padding-top: 4.5rem; 
-  scroll-padding-top: 64px; 
+  scroll-padding-top: 4.5rem;
+  scroll-padding-top: 64px;
 }
 
-.logo-image{
+.logo-image {
   height: 40px;
   width: auto;
 }
 
 .card-hover {
-  transition: box-shadow 0.3s, transform 0.3s;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  transition:
+    box-shadow 0.3s,
+    transform 0.3s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 .card-hover:hover {
-  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
   transform: translateY(-6px) scale(1.03);
 }
-.button, .input {
-  transition: box-shadow 0.2s, background 0.2s;
+.button,
+.input {
+  transition:
+    box-shadow 0.2s,
+    background 0.2s;
 }
-.button:hover, .button:focus {
+.button:hover,
+.button:focus {
   background: #3b82f6;
   color: #fff;
-  box-shadow: 0 2px 8px rgba(59,130,246,0.2);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
   outline: none;
 }
 .input:focus {
@@ -190,15 +193,15 @@ html{
   display: inline-block;
 }
 .nav-underline::after {
-  content: '';
+  content: "";
   position: absolute;
   left: 0;
   bottom: -2px;
   width: 0;
   height: 2px;
   /* background: #00446f;  */
-  background: var(--secondary); 
-  transition: width 0.3s cubic-bezier(0.4,0,0.2,1);
+  background: var(--secondary);
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .nav-underline:hover::after,
 .nav-underline:focus::after {

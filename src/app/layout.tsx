@@ -1,17 +1,18 @@
-import type React from "react"
-import { Navbar } from "@/components/navbar"
-import { Footer } from "@/components/footer"
-import "./globals.css"
+import type React from "react";
+import { Navbar } from "@/components/navbar";
+import { Footer } from "@/components/footer";
+import "./globals.css";
 
 export const metadata = {
   title: "Dharvix",
-  description: "We help businesses grow and succeed with our comprehensive suite of professional services. From strategic planning to execution, we're your partner in business excellence.",
-}
+  description:
+    "We help businesses grow and succeed with our comprehensive suite of professional services. From strategic planning to execution, we're your partner in business excellence.",
+};
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html lang="en">
@@ -23,6 +24,5 @@ export default function RootLayout({
         </div>
       </body>
     </html>
-  )
+  );
 }
-

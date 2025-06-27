@@ -1,16 +1,16 @@
-import Image from "next/image"
-import { Card, CardContent, CardFooter } from "@/components/ui/card"
-import { Facebook, Linkedin, Twitter } from "lucide-react"
+import Image from "next/image";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Facebook, Linkedin, Twitter } from "lucide-react";
 
 interface TeamCardProps {
-  name: string
-  role: string
-  imageUrl: string
+  name: string;
+  role: string;
+  imageUrl: string;
   socialLinks?: {
-    linkedin?: string
-    twitter?: string
-    facebook?: string
-  }
+    linkedin?: string;
+    twitter?: string;
+    facebook?: string;
+  };
 }
 
 export function TeamCard({ name, role, imageUrl, socialLinks }: TeamCardProps) {
@@ -66,6 +66,5 @@ export function TeamCard({ name, role, imageUrl, socialLinks }: TeamCardProps) {
         </CardFooter>
       )}
     </Card>
-  )
+  );
 }
-

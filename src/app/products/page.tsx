@@ -1,8 +1,8 @@
-import Image from "next/image"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { CTASection } from "@/components/cta-section"
-import { Clock } from "lucide-react"
+import Image from "next/image";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { CTASection } from "@/components/cta-section";
+import { Clock } from "lucide-react";
 
 export default function ProductsPage() {
   return (
@@ -11,9 +11,12 @@ export default function ProductsPage() {
       <section className="bg-muted px-10 py-20">
         <div className="container">
           <div className="max-w-3xl">
-            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl mb-6">Our Products</h1>
+            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl mb-6">
+              Our Products
+            </h1>
             <p className="text-xl text-muted-foreground">
-              Discover our range of premium business products designed to enhance your operations.
+              Discover our range of premium business products designed to
+              enhance your operations.
             </p>
           </div>
         </div>
@@ -28,8 +31,9 @@ export default function ProductsPage() {
             </div>
             <h2 className="text-4xl font-bold mb-6">Products Coming Soon</h2>
             <p className="text-xl text-muted-foreground mb-8">
-              We're working on developing innovative products to help your business thrive. Stay tuned for our upcoming
-              releases that will revolutionize how you operate.
+              We're working on developing innovative products to help your
+              business thrive. Stay tuned for our upcoming releases that will
+              revolutionize how you operate.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button asChild size="lg">
@@ -71,7 +75,10 @@ export default function ProductsPage() {
                   "A powerful financial planning tool to help you optimize your resources, forecast future performance, and maximize profitability.",
               },
             ].map((product, index) => (
-              <div key={index} className="bg-background rounded-lg overflow-hidden shadow-sm">
+              <div
+                key={index}
+                className="bg-background rounded-lg overflow-hidden shadow-sm"
+              >
                 <div className="relative aspect-video">
                   <Image
                     src={`/placeholder.svg?height=300&width=500`}
@@ -98,6 +105,5 @@ export default function ProductsPage() {
       {/* CTA Section */}
       <CTASection />
     </>
-  )
+  );
 }
-

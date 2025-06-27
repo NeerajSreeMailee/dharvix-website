@@ -1,13 +1,17 @@
-import type { LucideIcon } from "lucide-react"
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import type { LucideIcon } from "lucide-react";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 interface ServiceCardProps {
-  icon: LucideIcon
-  title: string
-  description: string
+  icon: LucideIcon;
+  title: string;
+  description: string;
 }
 
-export function ServiceCard({ icon: Icon, title, description }: ServiceCardProps) {
+export function ServiceCard({
+  icon: Icon,
+  title,
+  description,
+}: ServiceCardProps) {
   return (
     <Card className="h-full">
       <CardHeader className="pb-2">
@@ -20,6 +24,5 @@ export function ServiceCard({ icon: Icon, title, description }: ServiceCardProps
         <p className="text-muted-foreground">{description}</p>
       </CardContent>
     </Card>
-  )
+  );
 }
-

@@ -27,39 +27,39 @@
 // // It also updates the document's class to apply the appropriate styles.
 // // This allows components to easily access and change the theme without duplicating logic.
 
+import { useCallback, useEffect, useState } from "react";
 
-import { useCallback, useEffect, useState } from "react"
-
-type Theme = "light" | "dark"
+type Theme = "light" | "dark";
 
 export function useTheme() {
   // Check initial theme from localStorage or system preference
   const getInitialTheme = (): Theme => {
     if (typeof window !== "undefined") {
-      const stored = localStorage.getItem("theme")
-      if (stored === "light" || stored === "dark") return stored
-      if (window.matchMedia("(prefers-color-scheme: dark)").matches) return "dark"
+      const stored = localStorage.getItem("theme");
+      if (stored === "light" || stored === "dark") return stored;
+      if (window.matchMedia("(prefers-color-scheme: dark)").matches)
+        return "dark";
     }
-    return "light"
-  }
+    return "light";
+  };
 
-  const [theme, setTheme] = useState<Theme>(getInitialTheme)
+  const [theme, setTheme] = useState<Theme>(getInitialTheme);
 
   // Apply theme to <html> element
   useEffect(() => {
-    const root = window.document.documentElement
+    const root = window.document.documentElement;
     if (theme === "dark") {
-      root.classList.add("dark")
+      root.classList.add("dark");
     } else {
-      root.classList.remove("dark")
+      root.classList.remove("dark");
     }
-    localStorage.setItem("theme", theme)
-  }, [theme])
+    localStorage.setItem("theme", theme);
+  }, [theme]);
 
   // Toggle theme
   const toggleTheme = useCallback(() => {
-    setTheme((prev) => (prev === "dark" ? "light" : "dark"))
-  }, [])
+    setTheme((prev) => (prev === "dark" ? "light" : "dark"));
+  }, []);
 
-  return { theme, toggleTheme }
+  return { theme, toggleTheme };
 }

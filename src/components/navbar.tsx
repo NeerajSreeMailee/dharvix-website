@@ -15,16 +15,28 @@ const NAV_ITEMS = [
     name: "SOLUTIONS",
     href: "/solutions",
     dropdown: [
-      { name: "AI Agents & Automation Ecosystem", href: "/solutions/ai-agents-automations" },
-      { name: "Data Intelligence & IoT Ecosystem", href: "/solutions/data-intelligence-iot" },
+      {
+        name: "AI Agents & Automation Ecosystem",
+        href: "/solutions/ai-agents-automations",
+      },
+      {
+        name: "Data Intelligence & IoT Ecosystem",
+        href: "/solutions/data-intelligence-iot",
+      },
     ],
   },
   {
     name: "SERVICES",
     href: "/services",
     dropdown: [
-      { name: "AI & Intelligent Systems Services", href: "/services/ai-intelligent-systems" },
-      { name: "Enterprise Digital Solutions & Integration Services", href: "/services/enterprise-digital-solutions" },
+      {
+        name: "AI & Intelligent Systems Services",
+        href: "/services/ai-intelligent-systems",
+      },
+      {
+        name: "Enterprise Digital Solutions & Integration Services",
+        href: "/services/enterprise-digital-solutions",
+      },
     ],
   },
   { name: "CUSTOMERS", href: "/customers" },
@@ -37,6 +49,7 @@ const NAV_ITEMS = [
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [isScrolled, setIsScrolled] = useState(false); // New state for scroll detection
 
   useEffect(() => {
     document.body.style.overflow = isMenuOpen ? "hidden" : "";
@@ -45,25 +58,51 @@ export function Navbar() {
     };
   }, [isMenuOpen]);
 
+  // Effect to handle scroll for background change
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        // Adjust threshold as needed
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
+  // Adjusted for better contrast on a transparent background, especially when scrolled
   const navHover =
-    "hover:bg-blue-900/10 hover:text-blue-900 transition-colors duration-150 text-sm";
+    "hover:bg-white/20 hover:text-white transition-colors duration-150 text-sm"; // Lightened hover
 
   const dropdownStyle = cn(
-    "absolute left-0 top-full min-w-[200px] bg-white dark:bg-blue-950 border border-blue-200 dark:border-blue-800 shadow-lg rounded-lg z-20 py-3 transition-all duration-300 ease-in-out"
+    "absolute left-0 top-full min-w-[200px] bg-white/95 dark:bg-gray-900/95 border border-gray-200 dark:border-gray-700 shadow-lg rounded-lg z-20 py-3 backdrop-blur-md transition-all duration-300 ease-in-out", // Added backdrop-blur
   );
 
   const dropdownItemStyle = cn(
-    "block px-4 py-2 text-blue-900 dark:text-white text-sm rounded-md font-medium transition-colors duration-200",
-    "hover:bg-blue-100 dark:hover:bg-blue-800 hover:text-blue-700 dark:hover:text-white"
+    "block px-4 py-2 text-gray-800 dark:text-white text-sm rounded-md font-medium transition-colors duration-200",
+    "hover:bg-blue-100 dark:hover:bg-gray-700 hover:text-blue-700 dark:hover:text-white",
   );
 
   return (
-    <header className="sticky top-0 z-50 w-full transition-all duration-300 border-b border-blue-200 bg-white/95 dark:bg-blue-950/95 shadow-md">
+    <header
+      className={cn(
+        "sticky top-0 z-50 w-full transition-all duration-300",
+        isScrolled
+          ? "bg-gray-900/80 backdrop-blur-lg border-b border-gray-700 shadow-lg" // Darker, blurred background on scroll
+          : "bg-transparent border-b border-transparent", // Fully transparent when not scrolled
+      )}
+    >
       <div className="container flex h-20 items-center justify-between px-2 md:px-8">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 p-2 mr-8 rounded-md hover:bg-blue-100/40 transition">
+        <Link
+          href="/"
+          className="flex items-center gap-2 p-2 mr-8 rounded-md hover:bg-white/10 transition"
+        >
           <Image src={Logo} alt="Logo" height={44} />
           <Image src={Text} alt="Text" height={32} />
         </Link>
@@ -81,9 +120,9 @@ export function Navbar() {
                 <Link
                   href={item.href}
                   className={cn(
-                    "uppercase px-4 py-2 font-semibold text-blue-900 text-base tracking-wide flex items-center gap-1 rounded-md",
+                    "uppercase px-4 py-2 font-semibold text-white text-base tracking-wide flex items-center gap-1 rounded-md", // Text color is white for transparent
                     navHover,
-                    openDropdown === item.name && "text-blue-700 bg-blue-100/60"
+                    openDropdown === item.name && "text-blue-300 bg-white/10", // Lighter active state
                   )}
                   style={{ letterSpacing: "0.04em" }}
                 >
@@ -98,7 +137,11 @@ export function Navbar() {
                     onMouseLeave={() => setOpenDropdown(null)}
                   >
                     {item.dropdown.map((drop) => (
-                      <Link key={drop.name} href={drop.href} className={dropdownItemStyle}>
+                      <Link
+                        key={drop.name}
+                        href={drop.href}
+                        className={dropdownItemStyle}
+                      >
                         {drop.name}
                       </Link>
                     ))}
@@ -110,24 +153,28 @@ export function Navbar() {
                 key={item.name}
                 href={item.href}
                 className={cn(
-                  "uppercase px-4 py-2 font-semibold text-blue-900 text-base rounded-md tracking-wide",
-                  navHover
+                  "uppercase px-4 py-2 font-semibold text-white text-base rounded-md tracking-wide", // Text color is white for transparent
+                  navHover,
                 )}
                 style={{ letterSpacing: "0.04em" }}
               >
                 {item.name}
               </Link>
-            )
+            ),
           )}
         </nav>
 
         {/* Mobile Menu Button */}
         <button
-          className="md:hidden p-2 rounded-md transition-colors focus:ring-2 focus:ring-blue-400 focus:outline-none bg-blue-100"
+          className="md:hidden p-2 rounded-md transition-colors focus:ring-2 focus:ring-blue-400 focus:outline-none bg-white/10 text-white" // Adjusted for transparent
           onClick={toggleMenu}
           aria-label={isMenuOpen ? "Close Menu" : "Open Menu"}
         >
-          {isMenuOpen ? <X className="h-7 w-7 text-blue-900" /> : <Menu className="h-7 w-7 text-blue-900" />}
+          {isMenuOpen ? (
+            <X className="h-7 w-7" />
+          ) : (
+            <Menu className="h-7 w-7" />
+          )}
         </button>
       </div>
 
@@ -135,33 +182,39 @@ export function Navbar() {
       <div
         className={cn(
           "md:hidden fixed top-0 left-0 w-full h-full z-40 transition-all duration-300",
-          isMenuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+          isMenuOpen
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none",
         )}
       >
         <div
           className={cn(
             "absolute inset-0 bg-black/80 transition-opacity duration-300 backdrop-blur-sm",
-            isMenuOpen ? "opacity-100" : "opacity-0"
+            isMenuOpen ? "opacity-100" : "opacity-0",
           )}
           onClick={() => setIsMenuOpen(false)}
         />
         <div
           className={cn(
-            "absolute right-0 top-0 w-4/5 max-w-xs h-full shadow-2xl flex flex-col p-6 transition-transform duration-300 bg-white/95 dark:bg-blue-950/95 border-l border-blue-200 dark:border-blue-800",
-            isMenuOpen ? "translate-x-0" : "translate-x-full"
+            "absolute right-0 top-0 w-4/5 max-w-xs h-full shadow-2xl flex flex-col p-6 transition-transform duration-300 bg-gray-900/95 dark:bg-gray-900/95 border-l border-gray-700 dark:border-gray-700 backdrop-blur-md", // Darker for mobile menu
+            isMenuOpen ? "translate-x-0" : "translate-x-full",
           )}
         >
           <div className="flex items-center justify-between mb-8">
-            <Link href="/" className="flex items-center gap-2" onClick={() => setIsMenuOpen(false)}>
+            <Link
+              href="/"
+              className="flex items-center gap-2"
+              onClick={() => setIsMenuOpen(false)}
+            >
               <Image src={Logo} alt="Dharvix" height={36} />
               <Image src={Text} alt="Dharvix" height={28} />
             </Link>
             <button
-              className="p-2 rounded-full focus:ring-2 focus:ring-blue-400 focus:outline-none bg-blue-100"
+              className="p-2 rounded-full focus:ring-2 focus:ring-blue-400 focus:outline-none bg-gray-700 text-white" // Adjusted for dark background
               onClick={() => setIsMenuOpen(false)}
               aria-label="Close Menu"
             >
-              <X className="h-6 w-6 text-blue-900" />
+              <X className="h-6 w-6" />
             </button>
           </div>
 
@@ -170,12 +223,14 @@ export function Navbar() {
             {NAV_ITEMS.map((item) =>
               item.dropdown ? (
                 <div key={item.name} className="flex flex-col">
-                  <span className="uppercase px-2 py-2 font-semibold text-blue-900 text-base">{item.name}</span>
+                  <span className="uppercase px-2 py-2 font-semibold text-white text-base">
+                    {item.name}
+                  </span>
                   {item.dropdown.map((drop) => (
                     <Link
                       key={drop.name}
                       href={drop.href}
-                      className="pl-6 py-2 text-blue-900 text-base rounded-md font-medium hover:bg-blue-100/60 hover:text-blue-700 transition-colors duration-150"
+                      className="pl-6 py-2 text-gray-300 text-base rounded-md font-medium hover:bg-white/10 hover:text-white transition-colors duration-150"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       {drop.name}
@@ -186,12 +241,12 @@ export function Navbar() {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="uppercase px-2 py-2 font-semibold rounded-md transition focus:outline-none focus:ring-2 focus:ring-blue-400 tracking-wide text-base text-blue-900 hover:bg-blue-100/60 hover:text-blue-700"
+                  className="uppercase px-2 py-2 font-semibold rounded-md transition focus:outline-none focus:ring-2 focus:ring-blue-400 tracking-wide text-base text-white hover:bg-white/10 hover:text-white"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {item.name}
                 </Link>
-              )
+              ),
             )}
           </nav>
         </div>

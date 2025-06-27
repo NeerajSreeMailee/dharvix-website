@@ -1,62 +1,356 @@
-"use client";
-import { useRouter } from 'next/navigation';
-import Image from 'next/image';
-import { CTASection } from '@/components/cta-section';
-import React, { useState } from 'react';
+'use client';
 
+import { useState, useEffect, useRef } from 'react';
+import Link from 'next/link';
+import { Menu, X, ChevronDown, Facebook, Instagram, Linkedin, Twitter, Camera, Mail, Play, Pause, Volume2, VolumeX } from 'lucide-react';
+import { cn } from '@/lib/utils'; // Assuming you have this utility for conditional classnames
+import Image from 'next/image';
+import Logo from '../assets/logo.png';
+import Text from '../assets/text.png';
+import { Navbar } from '@/components/navbar'
+import { Footer } from '@/components/footer'
+
+// --- CTASection Component ---
+const CTASection = () => {
+  type Particle = {
+    id: number;
+    x: number;
+    y: number;
+    size: number;
+    speed: number;
+    opacity: number;
+  };
+
+  const [particles, setParticles] = useState<Particle[]>([]);
+
+  useEffect(() => {
+    const generateParticles = () => {
+      const newParticles = [...Array(30)].map((_, i) => ({
+        id: i,
+        x: Math.random() * 100,
+        y: Math.random() * 100,
+        size: Math.random() * 4 + 1,
+        speed: Math.random() * 2 + 0.5,
+        opacity: Math.random() * 0.8 + 0.2,
+      }));
+      setParticles(newParticles);
+    };
+
+    generateParticles();
+    const interval = setInterval(generateParticles, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <section className="py-24 bg-gradient-to-br from-[#1C7ED6]/20 to-[#38D9A9]/20 relative overflow-hidden">
+      <div className="absolute inset-0 bg-[#0B0F1C]/50"></div>
+
+      {/* Floating particles */}
+      {particles.map((particle) => (
+        <div
+          key={particle.id}
+          className="absolute w-1 h-1 bg-[#38D9A9] rounded-full animate-bounce"
+          style={{
+            left: `${particle.x}%`,
+            top: `${particle.y}%`,
+            opacity: particle.opacity,
+            animationDuration: `${particle.speed}s`,
+            animationDelay: `${Math.random() * 2}s`,
+          }}
+        />
+      ))}
+
+      <div className="container mx-auto px-6 relative z-10">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-4xl md:text-5xl font-bold text-[#F1F3F5] mb-6 animate-pulse">Ready to Transform Your Business?</h2>
+          <p className="text-xl text-[#F1F3F5]/70 mb-8">
+            Let's build something extraordinary together. Your vision, our innovation.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button className="group px-8 py-4 bg-gradient-to-r from-[#1C7ED6] to-[#38D9A9] text-[#F1F3F5] rounded-xl font-semibold hover:scale-110 transition-all duration-300 shadow-lg hover:shadow-2xl relative overflow-hidden">
+              <span className="relative z-10">Start Your Project</span>
+              <div className="absolute inset-0 bg-gradient-to-r from-[#38D9A9] to-[#1C7ED6] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            </button>
+            <button className="px-8 py-4 border-2 border-[#1C7ED6] text-[#1C7ED6] rounded-xl font-semibold hover:bg-[#1C7ED6]/10 hover:border-[#38D9A9] transition-all duration-300 hover:scale-105">
+              Schedule Consultation
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+// --- NeuralNetwork Background Component ---
+const NeuralNetwork = ({ mousePosition }: { mousePosition: { x: number; y: number } }) => {
+  const [connections, setConnections] = useState<Connection[]>([]);
+  const [nodes, setNodes] = useState<Node[]>([]);
+  type Node = {
+    id: number;
+    x: number;
+    y: number;
+    pulse: number;
+  };
+
+  type Connection = {
+    from: Node;
+    to: Node;
+    strength: number;
+  };
+
+  useEffect(() => {
+    const generateNetwork = () => {
+      const newNodes = [...Array(12)].map((_, i) => ({
+        id: i,
+        x: Math.random() * 100,
+        y: Math.random() * 100,
+        pulse: Math.random() * 2 + 1,
+      }));
+
+      const newConnections = [];
+      for (let i = 0; i < newNodes.length; i++) {
+        for (let j = i + 1; j < newNodes.length; j++) {
+          const distance = Math.sqrt(
+            Math.pow(newNodes[i].x - newNodes[j].x, 2) + Math.pow(newNodes[i].y - newNodes[j].y, 2)
+          );
+          if (distance < 40) {
+            newConnections.push({
+              from: newNodes[i],
+              to: newNodes[j],
+              strength: 1 - distance / 40,
+            });
+          }
+        }
+      }
+
+      setNodes(newNodes);
+      setConnections(newConnections);
+    };
+
+    generateNetwork();
+  }, []);
+
+  return (
+    <div className="absolute inset-0 opacity-30">
+      <svg className="w-full h-full">
+        {connections.map((conn, i) => (
+          <line
+            key={i}
+            x1={`${conn.from.x}%`}
+            y1={`${conn.from.y}%`}
+            x2={`${conn.to.x}%`}
+            y2={`${conn.to.y}%`}
+            stroke="#1C7ED6"
+            strokeWidth={conn.strength * 2}
+            opacity={conn.strength * 0.5}
+            className="animate-pulse"
+          />
+        ))}
+      </svg>
+      {nodes.map((node) => (
+        <div
+          key={node.id}
+          className="absolute w-3 h-3 bg-[#38D9A9] rounded-full shadow-lg"
+          style={{
+            left: `${node.x}%`,
+            top: `${node.y}%`,
+            animationDuration: `${node.pulse}s`,
+            boxShadow: `0 0 20px #38D9A9`,
+          }}
+        />
+      ))}
+    </div>
+  );
+};
+
+// --- Interactive Timeline Component ---
+const InteractiveTimeline = () => {
+  const [selectedYear, setSelectedYear] = useState(2025);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const timelineEvents = [
+    { year: 2024, title: 'The Spark', description: 'Initial concept conceived' },
+    { year: 2025, title: 'Company Launch', description: 'Official founding and first products' },
+    { year: 2027, title: 'Market Expansion', description: 'Global reach and partnerships' },
+    { year: 2030, title: 'AI Revolution', description: 'Leading the next wave of innovation' },
+  ];
+
+  return (
+    <div className="relative">
+      <div className="text-center mb-8">
+        <button
+          onClick={() => setIsPlaying(!isPlaying)}
+          className="flex items-center gap-2 mx-auto px-6 py-3 bg-gradient-to-r from-[#1C7ED6] to-[#38D9A9] rounded-full text-[#F1F3F5] hover:scale-105 transition-transform"
+        >
+          {isPlaying ? <Pause size={16} /> : <Play size={16} />}
+          {isPlaying ? 'Pause Timeline' : 'Play Timeline'}
+        </button>
+      </div>
+
+      <div className="relative bg-gradient-to-r from-[#1C7ED6]/10 to-[#38D9A9]/10 rounded-3xl p-8 backdrop-blur-sm border border-[#1C7ED6]/30">
+        <div className="flex justify-between items-center mb-8">
+          {timelineEvents.map((event) => (
+            <div
+              key={event.year}
+              className={`cursor-pointer transition-all duration-300 ${
+                selectedYear === event.year
+                  ? 'scale-125 text-[#38D9A9]'
+                  : 'text-[#F1F3F5]/60 hover:text-[#1C7ED6] hover:scale-110'
+              }`}
+              onClick={() => setSelectedYear(event.year)}
+            >
+              <div
+                className={`w-4 h-4 rounded-full mb-2 mx-auto ${
+                  selectedYear === event.year ? 'bg-[#38D9A9] shadow-lg' : 'bg-[#1C7ED6]/50'
+                }`}
+                style={{
+                  boxShadow: selectedYear === event.year ? '0 0 20px #38D9A9' : 'none',
+                }}
+              ></div>
+              <div className="text-sm font-bold">{event.year}</div>
+            </div>
+          ))}
+        </div>
+
+        <div className="text-center">
+          {timelineEvents
+            .filter((event) => event.year === selectedYear)
+            .map((event) => (
+              <div key={event.year} className="animate-fadeIn">
+                <h3 className="text-3xl font-bold text-[#F1F3F5] mb-4">{event.title}</h3>
+                <p className="text-xl text-[#F1F3F5]/70">{event.description}</p>
+              </div>
+            ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// --- AboutPage Main Component ---
 export default function AboutPage() {
-  const [selectedLeader, setSelectedLeader] = useState<string>("neeraj");
+  const [selectedLeader, setSelectedLeader] = useState('neeraj');
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [scrollY, setScrollY] = useState(0);
+  const [soundEnabled, setSoundEnabled] = useState(false);
+  const heroRef = useRef(null);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePosition({
+        x: (e.clientX / window.innerWidth) * 100,
+        y: (e.clientY / window.innerHeight) * 100,
+      });
+    };
+
+    const handleScroll = () => {
+      setScrollY(window.scrollY);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   const leaders = [
     {
-      id: "Sharan Venkatesh Gorle",
-      name: "Sharan Venkatesh Gorle",
-      role: "CFO & HRD Manager",
-      image: "/images/about/neeraj.jpg",
+      id: 'Sharan Venkatesh Gorle',
+      name: 'Sharan Venkatesh Gorle',
+      role: 'CFO & HRD Manager',
+      image: '/images/Charan.jpeg', // Placeholder, ensure you have actual images
       description:
-        "With a keen eye for financial strategy and talent development, Sharan orchestrates our growth while building a culture of excellence. His expertise in scaling operations and nurturing talent drives our organizational success.",
-      linkedin: "#",
-      email: "sharan@company.com"
+        'With a keen eye for financial strategy and talent development, Sharan orchestrates our growth while building a culture of excellence. His expertise in scaling operations and nurturing talent drives our organizational success.',
+      linkedin: '#',
+      email: 'sharan@company.com',
+      specialty: 'Financial Strategy & Team Development',
+      aiPhilosophy: 'AI should amplify human decision-making, not replace it',
+      color: '#1C7ED6',
     },
     {
-      id: "neeraj",
-      name: "Neeraj Sree Mailee Dudaboyina",
-      role: "CTO, Technical & Product Manager",
-      image: "/images/about/neeraj.jpg",
+      id: 'neeraj',
+      name: 'Neeraj Sree Mailee Dudaboyina',
+      role: 'CTO, Technical & Product Manager',
+      image: '/images/Neeraj_Mailee.jpeg', // Placeholder, ensure you have actual images
       description:
-        "The technical visionary behind our AI innovations. Neeraj transforms complex challenges into elegant solutions, leading our engineering excellence while ensuring every product delivers real impact.",
-      linkedin: "#",
-      email: "neeraj@company.com"
+        'The technical visionary behind our AI innovations. Neeraj transforms complex challenges into elegant solutions, leading our engineering excellence while ensuring every product delivers real impact.',
+      linkedin: '#',
+      email: 'neeraj@company.com',
+      specialty: 'AI Architecture & Product Innovation',
+      aiPhilosophy: 'The future belongs to AI that understands context, not just data',
+      color: '#38D9A9',
     },
     {
-      id: "Priyanka Bhansali",
-      name: "Priyanka Bhansali",
-      role: "CBO",
-      image: "/images/about/neeraj.jpg",
+      id: 'Priyanka Bhansali',
+      name: 'Priyanka Bhansali',
+      role: 'CBO',
+      image: '/images/Priyanka.jpeg', // Placeholder, ensure you have actual images
       description:
-        "Priyanka bridges strategy with execution, driving business growth through meaningful partnerships. Her market insights and relationship-building expertise fuel our expansion across industries.",
-      linkedin: "#",
-      email: "priyanka@company.com"
+        'Priyanka bridges strategy with execution, driving business growth through meaningful partnerships. Her market insights and relationship-building expertise fuel our expansion across industries.',
+      linkedin: '#',
+      email: 'priyanka@company.com',
+      specialty: 'Strategic Partnerships & Market Expansion',
+      aiPhilosophy: "AI's greatest power lies in connecting people and possibilities",
+      color: '#7C3AED',
     },
     {
-      id: "Narendra Sirisipalli",
-      name: "Narendra Sirisipalli",
-      role: "CPO & Computer Vision Engineer",
-      image: "/images/about/neeraj.jpg",
+      id: 'Narendra Sirisipalli',
+      name: 'Narendra Sirisipalli',
+      role: 'CPO & Computer Vision Engineer',
+      image: '/images/Narendra.jpeg', // Placeholder, ensure you have actual images
       description:
-        "Where computer vision meets product excellence. Narendra combines deep technical expertise with user-centric design thinking to create solutions that see, understand, and adapt to real-world needs.",
-      linkedin: "#",
-      email: "narendra@company.com"
+        'Where computer vision meets product excellence. Narendra combines deep technical expertise with user-centric design thinking to create solutions that see, understand, and adapt to real-world needs.',
+      linkedin: '#',
+      email: 'narendra@company.com',
+      specialty: 'Computer Vision & Product Design',
+      aiPhilosophy: 'Vision without action is hallucination; action without vision is chaos',
+      color: '#F59E0B',
     },
     {
-      id: "Shazin Hijazy",
-      name: "Shazin Hijazy",
-      role: "COO",
-      image: "/images/about/neeraj.jpg",
+      id: 'Shazin Hijazy',
+      name: 'Shazin Hijazy',
+      role: 'COO',
+      image: '/images/Shazin.jpg', // Placeholder, ensure you have actual images
       description:
-        "The operational backbone ensuring seamless execution. Shazin transforms strategic vision into actionable results, optimizing processes while maintaining the agility that drives our innovation.",
-      linkedin: "#",
-      email: "shazin@company.com"
+        'The operational backbone ensuring seamless execution. Shazin transforms strategic vision into actionable results, optimizing processes while maintaining the agility that drives our innovation.',
+      linkedin: '#',
+      email: 'shazin@company.com',
+      specialty: 'Operations Excellence & Process Innovation',
+      aiPhilosophy: 'Perfect execution turns AI dreams into reality',
+      color: '#EF4444',
+    },
+  ];
+
+  const services = [
+    'AI & Intelligent Systems Services',
+    'Enterprise Digital Solutions & Integration Services',
+    'AI Agents & Automation Ecosystem',
+    'Advanced Analytics & Data Intelligence',
+  ];
+
+  const philosophyItems = [
+    {
+      icon: '⚡',
+      title: 'Think Different',
+      description:
+        "We question conventional approaches and dare to imagine what hasn't been done before. Innovation isn't just about technology—it's about reimagining possibilities.",
+      gradient: 'from-[#1C7ED6] to-[#7C3AED]',
+    },
+    {
+      icon: '❤️',
+      title: 'Build with Purpose',
+      description:
+        'Every line of code, every algorithm, every interface we create serves a meaningful purpose. We build technology that enhances human potential, not replaces it.',
+      gradient: 'from-[#38D9A9] to-[#1C7ED6]',
+    },
+    {
+      icon: '🌟',
+      title: 'Grow Together',
+      description:
+        "We believe in partnerships, not just transactions. Your success is our success, and we're committed to evolving alongside your business needs.",
+      gradient: 'from-[#F59E0B] to-[#38D9A9]',
     },
   ];
 
@@ -65,232 +359,217 @@ export default function AboutPage() {
   };
 
   return (
-    <>
-      {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900"></div>
-        <div className="absolute inset-0 opacity-20">
-          <Image
-            src="/images/about/office_image.jpg"
-            alt="Modern workspace"
-            layout="fill"
-            className="object-cover"
-          />
+    <div className="min-h-screen bg-[#0B0F1C] text-[#F1F3F5] overflow-x-hidden">
+      {/* Sound Control */}
+      <div className="fixed top-6 right-6 z-50">
+        <button
+          onClick={() => setSoundEnabled(!soundEnabled)}
+          className="p-3 bg-gradient-to-r from-[#1C7ED6]/20 to-[#38D9A9]/20 backdrop-blur-sm rounded-full border border-[#1C7ED6]/30 hover:scale-110 transition-transform"
+        >
+          {soundEnabled ? <Volume2 className="text-[#38D9A9]" size={20} /> : <VolumeX className="text-[#F1F3F5]/60" size={20} />}
+        </button>
+      </div>
+
+      {/* Hero Section with Enhanced Effects */}
+      <section ref={heroRef} className="relative min-h-screen flex items-center justify-center overflow-hidden">
+        {/* Dynamic Background with Neural Network */}
+        <div className="absolute inset-0 bg-[#0B0F1C]">
+          <NeuralNetwork mousePosition={mousePosition} />
+          <div
+            className="absolute inset-0 opacity-20 transition-all duration-300"
+            style={{
+              background: `radial-gradient(circle at ${mousePosition.x}% ${mousePosition.y}%, #1C7ED6 0%, #38D9A9 25%, transparent 50%)`,
+            }}
+          ></div>
         </div>
-        
-        {/* Floating Elements */}
+
+        {/* Floating Energy Orbs */}
         <div className="absolute inset-0">
-          <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-cyan-400 rounded-full animate-pulse opacity-60"></div>
-          <div className="absolute top-1/3 right-1/3 w-1 h-1 bg-blue-300 rounded-full animate-ping opacity-40"></div>
-          <div className="absolute bottom-1/3 left-1/5 w-3 h-3 bg-indigo-400 rounded-full animate-pulse opacity-50"></div>
-          <div className="absolute bottom-1/4 right-1/4 w-2 h-2 bg-purple-400 rounded-full animate-ping opacity-60"></div>
+          {[...Array(8)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute w-2 h-2 bg-gradient-to-r from-[#1C7ED6] to-[#38D9A9] rounded-full animate-pulse"
+              style={{
+                top: `${20 + i * 10}%`,
+                left: `${10 + i * 12}%`,
+                animationDelay: `${i * 0.5}s`,
+                animationDuration: `${3 + (i % 3)}s`,
+                boxShadow: `0 0 ${10 + i * 2}px ${i % 2 === 0 ? '#1C7ED6' : '#38D9A9'}`,
+              }}
+            ></div>
+          ))}
         </div>
 
         <div className="relative z-10 container mx-auto px-6 text-center">
-          <div className="max-w-5xl mx-auto">
-            <div className="inline-block px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-blue-200 text-sm font-medium mb-6">
-              Founded in 2025 • Driven by Innovation
+          <div className="max-w-6xl mx-auto">
+            <div className="inline-block px-6 py-3 bg-gradient-to-r from-[#1C7ED6]/20 to-[#38D9A9]/20 backdrop-blur-sm rounded-full text-[#F1F3F5]/80 text-sm font-medium mb-8 border border-[#1C7ED6]/30 animate-pulse">
+              🚀 Founded in 2025 • Driven by Innovation
             </div>
-            <h1 className="text-6xl md:text-8xl font-bold mb-8 text-white leading-tight">
+            <h1 className="text-6xl md:text-8xl lg:text-9xl font-bold mb-8 text-[#F1F3F5] leading-tight">
               We are
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400">
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-[#38D9A9] via-[#1C7ED6] to-[#38D9A9] animate-pulse">
                 Innovators
               </span>
             </h1>
-            <p className="text-xl md:text-2xl text-blue-100 mb-12 max-w-3xl mx-auto leading-relaxed">
-              Crafting intelligent solutions that transform how businesses operate, 
-              one breakthrough at a time.
+            <p className="text-xl md:text-2xl text-[#F1F3F5]/70 mb-12 max-w-4xl mx-auto leading-relaxed">
+              Crafting intelligent solutions that transform how businesses operate, one breakthrough at a time.
             </p>
-            <div className="flex items-center justify-center gap-8 text-blue-200">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                <span className="text-sm">AI & Intelligent Systems Services</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
-                <span className="text-sm">Enterprise Digital Solutions & Integration Services</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></div>
-                <span className="text-sm">AI Agents & Automation Ecosystem</span>
-              </div>
-               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
-                <span className="text-sm">AI Agents & Automation Ecosystem</span>
-              </div>
+
+            {/* Enhanced Service Tags */}
+            <div className="flex flex-wrap items-center justify-center gap-4 text-[#F1F3F5]/70 mb-8">
+              {services.map((service, index) => (
+                <div
+                  key={index}
+                  className="group flex items-center gap-2 bg-[#1C7ED6]/10 backdrop-blur-sm px-4 py-2 rounded-full border border-[#1C7ED6]/20 hover:bg-[#1C7ED6]/20 hover:scale-105 transition-all duration-300"
+                >
+                  <div
+                    className={`w-2 h-2 rounded-full animate-pulse transition-all duration-300 ${
+                      index % 2 === 0 ? 'bg-[#38D9A9] group-hover:shadow-lg' : 'bg-[#1C7ED6] group-hover:shadow-lg'
+                    }`}
+                    style={{
+                      boxShadow: `0 0 10px ${index % 2 === 0 ? '#38D9A9' : '#1C7ED6'}`,
+                    }}
+                  ></div>
+                  <span className="text-sm font-medium group-hover:text-[#F1F3F5] transition-colors">{service}</span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
 
-        {/* Scroll Indicator */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white animate-bounce">
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-          </svg>
+        {/* Enhanced Scroll Indicator */}
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-[#F1F3F5] animate-bounce">
+          <div className="w-6 h-10 border-2 border-[#1C7ED6] rounded-full flex justify-center hover:border-[#38D9A9] transition-colors cursor-pointer">
+            <div className="w-1 h-3 bg-gradient-to-b from-[#1C7ED6] to-[#38D9A9] rounded-full mt-2 animate-pulse"></div>
+          </div>
+          <ChevronDown className="mt-2 animate-pulse" size={20} />
         </div>
       </section>
 
-      {/* Story Section */}
-      <section className="py-24 bg-white relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-blue-50 to-transparent opacity-50"></div>
+      {/* Enhanced Story Section */}
+      <section className="py-24 bg-gradient-to-br from-[#0B0F1C] via-[#1C7ED6]/5 to-[#0B0F1C] relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-[#1C7ED6]/10 to-transparent"></div>
         <div className="container mx-auto px-6 relative z-10">
-          <div className="max-w-6xl mx-auto">
+          <div className="max-w-7xl mx-auto">
             <div className="grid lg:grid-cols-2 gap-16 items-center">
-              <div>
-                <div className="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium mb-4">
-                  Our Beginning
+              <div className="space-y-6">
+                <div className="inline-block px-4 py-2 bg-gradient-to-r from-[#1C7ED6]/20 to-[#38D9A9]/20 text-[#F1F3F5] rounded-full text-sm font-medium border border-[#1C7ED6]/30 animate-pulse">
+                  📖 Our Beginning
                 </div>
-                <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-                  Born from a 
-                  <span className="text-blue-600"> Bold Vision</span>
+                <h2 className="text-5xl md:text-6xl font-bold text-[#F1F3F5] leading-tight">
+                  Born from a
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1C7ED6] to-[#38D9A9]">
+                    {' '}
+                    Bold Vision
+                  </span>
                 </h2>
-                <div className="prose prose-lg text-gray-700 leading-relaxed">
-                  <p className="mb-6">
-                    In early 2025, while the world was buzzing about AI possibilities, 
-                    we saw something different. We witnessed brilliant technologies 
-                    sitting unused because they weren't designed for real people 
-                    solving real problems.
+                <div className="space-y-4 text-lg text-[#F1F3F5]/70 leading-relaxed">
+                  <p className="hover:text-[#F1F3F5]/90 transition-colors">
+                    In early 2025, while the world was buzzing about AI possibilities, we saw something different. We
+                    witnessed brilliant technologies sitting unused because they weren't designed for real people solving
+                    real problems.
                   </p>
-                  <p className="mb-6">
-                    That's when our founders made a decision that would define everything: 
-                    instead of building technology first and finding users later, 
-                    we would start with human needs and craft technology around them.
+                  <p className="hover:text-[#F1F3F5]/90 transition-colors">
+                    That's when our founders made a decision that would define everything: instead of building technology
+                    first and finding users later, we would start with human needs and craft technology around them.
                   </p>
-                  <p>
-                    Today, we're not just another tech company. We're problem solvers, 
-                    innovation architects, and most importantly, partners in your journey 
-                    toward a more intelligent future.
+                  <p className="hover:text-[#F1F3F5]/90 transition-colors">
+                    Today, we're not just another tech company. We're problem solvers, innovation architects, and most
+                    importantly, partners in your journey toward a more intelligent future.
                   </p>
                 </div>
               </div>
+
               <div className="relative">
-                <div className="aspect-square bg-gradient-to-br from-blue-100 to-indigo-100 rounded-3xl p-8 relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10"></div>
-                  <div className="relative z-10 h-full flex flex-col justify-center">
-                    <div className="text-6xl font-bold text-blue-600 mb-4">2025</div>
-                    <div className="text-lg text-gray-700 mb-6">Year of Foundation</div>
-                    <div className="grid grid-cols-2 gap-4 text-center">
-                      <div className="bg-white/50 backdrop-blur-sm rounded-xl p-4">
-                        <div className="text-2xl font-bold text-gray-900">5</div>
-                        <div className="text-sm text-gray-600">Founding Members</div>
+                <InteractiveTimeline />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Enhanced Philosophy Section */}
+      <section className="py-24 bg-[#0B0F1C] relative">
+        <div className="container mx-auto px-6">
+          <div className="max-w-4xl mx-auto text-center mb-16">
+            <h2 className="text-5xl md:text-6xl font-bold text-[#F1F3F5] mb-6">Our Philosophy</h2>
+            <p className="text-xl text-[#F1F3F5]/60">Three principles that guide everything we do</p>
+          </div>
+
+          <div className="max-w-7xl mx-auto">
+            <div className="grid md:grid-cols-3 gap-8">
+              {philosophyItems.map((item, index) => (
+                <div key={index} className="group relative">
+                  <div className={`absolute inset-0 bg-gradient-to-br ${item.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}></div>
+                  <div className="bg-gradient-to-br from-[#1C7ED6]/10 to-[#38D9A9]/10 rounded-2xl p-8 shadow-sm hover:shadow-2xl transition-all duration-500 h-full border border-[#1C7ED6]/20 group-hover:border-[#1C7ED6]/50 group-hover:scale-105 relative overflow-hidden">
+                    <div className="relative z-10">
+                      <div className="text-4xl mb-6 group-hover:scale-110 transition-transform duration-300">
+                        {item.icon}
                       </div>
-                      <div className="bg-white/50 backdrop-blur-sm rounded-xl p-4">
-                        <div className="text-2xl font-bold text-gray-900">∞</div>
-                        <div className="text-sm text-gray-600">Possibilities</div>
-                      </div>
+                      <h3 className="text-2xl font-bold text-[#F1F3F5] mb-4 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-[#1C7ED6] group-hover:to-[#38D9A9] transition-all duration-300">
+                        {item.title}
+                      </h3>
+                      <p className="text-[#F1F3F5]/60 leading-relaxed group-hover:text-[#F1F3F5]/80 transition-colors">
+                        {item.description}
+                      </p>
                     </div>
                   </div>
                 </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* Philosophy Section */}
-      <section className="py-24 bg-gradient-to-br from-gray-50 to-blue-50">
+      {/* Enhanced Leadership Section with Orbital Layout */}
+      <section className="py-24 bg-gradient-to-br from-[#1C7ED6]/5 to-[#38D9A9]/5 relative overflow-hidden">
         <div className="container mx-auto px-6">
-          <div className="max-w-4xl mx-auto text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              Our Philosophy
-            </h2>
-            <p className="text-xl text-gray-600">
-              Three principles that guide everything we do
-            </p>
-          </div>
-
-          <div className="max-w-6xl mx-auto">
-            <div className="grid md:grid-cols-3 gap-8">
-              <div className="group">
-                <div className="bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-500 h-full border border-gray-100 group-hover:border-blue-200">
-                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                  </div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4">Think Different</h3>
-                  <p className="text-gray-600 leading-relaxed">
-                    We question conventional approaches and dare to imagine what hasn't been done before. 
-                    Innovation isn't just about technology—it's about reimagining possibilities.
-                  </p>
-                </div>
-              </div>
-
-              <div className="group">
-                <div className="bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-500 h-full border border-gray-100 group-hover:border-purple-200">
-                  <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                    </svg>
-                  </div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4">Build with Purpose</h3>
-                  <p className="text-gray-600 leading-relaxed">
-                    Every line of code, every algorithm, every interface we create serves a meaningful purpose. 
-                    We build technology that enhances human potential, not replaces it.
-                  </p>
-                </div>
-              </div>
-
-              <div className="group">
-                <div className="bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-500 h-full border border-gray-100 group-hover:border-green-200">
-                  <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-teal-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                    </svg>
-                  </div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4">Grow Together</h3>
-                  <p className="text-gray-600 leading-relaxed">
-                    We believe in partnerships, not just transactions. Your success is our success, 
-                    and we're committed to evolving alongside your business needs.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Leadership Section */}
-      <section className="py-24 bg-white">
-        <div className="container mx-auto px-6">
-          <div className="max-w-6xl mx-auto">
+          <div className="max-w-7xl mx-auto">
             <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-                The Minds Behind the Magic
-              </h2>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              <h2 className="text-5xl md:text-6xl font-bold text-[#F1F3F5] mb-6">The Minds Behind the Magic</h2>
+              <p className="text-xl text-[#F1F3F5]/60 max-w-4xl mx-auto">
                 Meet the visionaries, innovators, and problem-solvers who are shaping the future of intelligent technology
               </p>
             </div>
 
             <div className="grid lg:grid-cols-5 gap-8">
-              {/* Team Grid */}
-              <div className="lg:col-span-2 space-y-3">
+              {/* Enhanced Team Grid */}
+              <div className="lg:col-span-2 space-y-4"> {/* Increased space-y for better visual separation */}
                 {leaders.map((leader) => (
                   <div
                     key={leader.id}
-                    className={`cursor-pointer p-6 rounded-2xl transition-all duration-300 ${
-                      selectedLeader === leader.id 
-                        ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg" 
-                        : "bg-gray-50 hover:bg-gray-100 hover:shadow-md"
+                    className={`cursor-pointer p-6 rounded-2xl transition-all duration-300 border relative overflow-hidden group
+                    ${
+                      selectedLeader === leader.id
+                        ? 'bg-gradient-to-r from-[#1C7ED6] to-[#38D9A9] text-[#F1F3F5] shadow-xl border-transparent scale-105 animate-pulse-border' // Added custom animate-pulse-border
+                        : 'bg-[#1C7ED6]/10 hover:bg-[#1C7ED6]/20 hover:shadow-lg border-[#1C7ED6]/20 hover:scale-102'
                     }`}
                     onClick={() => handleLeaderClick(leader.id)}
                   >
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
-                        <Image
+                    {selectedLeader === leader.id && (
+                      // Enhanced glow effect for selected card
+                      <>
+                        <div className="absolute inset-0 bg-gradient-to-r from-[#38D9A9]/20 to-[#1C7ED6]/20 animate-pulse"></div>
+                        <div className="absolute inset-0 rounded-2xl ring-4 ring-[#38D9A9] opacity-70 animate-ping-once"></div>
+                      </>
+                    )}
+                    <div className="flex items-center gap-4 relative z-10">
+                      {/* Image container for half picture effect */}
+                      <div className="w-24 h-24 rounded-2xl overflow-hidden flex-shrink-0 border-2 border-white/20 relative"> {/* Adjusted height */}
+                        <img
                           src={leader.image}
                           alt={leader.name}
-                          width={48}
-                          height={48}
-                          className="object-cover w-full h-full"
+                          className="object-cover w-full h-[200%] object-top transform transition-transform duration-300 group-hover:scale-110" // Increased height and set object-top
                         />
+                         {selectedLeader === leader.id && (
+                          <div className="absolute inset-0 bg-gradient-to-br from-[#1C7ED6]/30 to-[#38D9A9]/30"></div>
+                        )}
                       </div>
-                      <div>
-                        <h3 className={`font-bold text-lg ${selectedLeader === leader.id ? "text-white" : "text-gray-900"}`}>
-                          {leader.name.split(' ')[0]} {leader.name.split(' ')[1]}
+                      <div className="flex-1">
+                        <h3 className={`font-bold text-lg transition-colors duration-300 ${selectedLeader === leader.id ? "text-[#F1F3F5]" : "text-[#F1F3F5]"}`}>
+                          {leader.name}
                         </h3>
-                        <p className={`text-sm ${selectedLeader === leader.id ? "text-blue-100" : "text-gray-600"}`}>
+                        <p className={`text-sm transition-colors duration-300 ${selectedLeader === leader.id ? "text-[#F1F3F5]/80" : "text-[#F1F3F5]/60"}`}>
                           {leader.role}
                         </p>
                       </div>
@@ -299,42 +578,65 @@ export default function AboutPage() {
                 ))}
               </div>
 
-              {/* Leader Profile */}
+              {/* Enhanced Leader Profile */}
               <div className="lg:col-span-3">
-                <div className="bg-gradient-to-br from-gray-50 to-blue-50 rounded-3xl p-8 h-full">
+                <div className="bg-gradient-to-br from-[#1C7ED6]/10 to-[#38D9A9]/10 rounded-3xl p-8 h-full backdrop-blur-sm border border-[#1C7ED6]/30 relative overflow-hidden">
+                    {/* Background orbiting elements */}
+                    {[...Array(5)].map((_, i) => (
+                        <div
+                            key={`orb-${i}`}
+                            className="absolute w-3 h-3 bg-gradient-to-r from-[#38D9A9] to-[#1C7ED6] rounded-full opacity-60 animate-orbit"
+                            style={{
+                                top: `${Math.random() * 100}%`,
+                                left: `${Math.random() * 100}%`,
+                                animationDuration: `${10 + Math.random() * 10}s`,
+                                animationDelay: `${Math.random() * 5}s`,
+                                boxShadow: `0 0 15px ${i % 2 === 0 ? '#38D9A9' : '#1C7ED6'}`,
+                                zIndex: 0
+                            }}
+                        />
+                    ))}
                   {leaders
                     .filter((leader) => leader.id === selectedLeader)
                     .map((leader) => (
-                      <div key={leader.id} className="h-full flex flex-col">
-                        <div className="flex items-start gap-6 mb-6">
-                          <div className="w-24 h-24 rounded-2xl overflow-hidden flex-shrink-0 shadow-lg">
-                            <Image
+                      <div key={leader.id} className="h-full flex flex-col relative z-10">
+                        <div className="flex items-start gap-6 mb-8">
+                          {/* Main profile image container for half picture effect */}
+                          <div className="w-80 h-80 rounded-3xl overflow-hidden flex-shrink-0 shadow-2xl border-4 border-[#1C7ED6]/30 relative group"> {/* Adjusted height */}
+                            <img
                               src={leader.image}
                               alt={leader.name}
-                              width={96}
-                              height={96}
-                              className="object-cover w-full h-full"
+                              className="object-cover w-full h-[200%] object-top transition-transform group-hover:scale-110 duration-500" // Increased height and set object-top
                             />
+                            <div className="absolute inset-0 bg-gradient-to-br from-transparent to-[#1C7ED6]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                           </div>
                           <div>
-                            <h3 className="text-3xl font-bold text-gray-900 mb-2">{leader.name}</h3>
-                            <p className="text-lg text-blue-600 font-semibold mb-4">{leader.role}</p>
-                            <div className="flex gap-3">
-                              <a href={leader.linkedin} className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white hover:bg-blue-700 transition-colors">
-                                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                                </svg>
+                            <h3 className="text-4xl font-bold text-[#F1F3F5] mb-2 leading-tight group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-[#38D9A9] group-hover:to-[#1C7ED6] transition-all duration-500">
+                                {leader.name}
+                            </h3>
+                            <p className="text-xl font-semibold mb-4 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-[#1C7ED6] group-hover:to-[#38D9A9] transition-all duration-500">
+                                {leader.role}
+                            </p>
+                            <p className="text-lg text-[#F1F3F5]/70 mb-3"><span className="font-semibold text-[#1C7ED6]">Specialty:</span> {leader.specialty}</p>
+                            <p className="text-lg text-[#F1F3F5]/70 mb-6 italic">"{leader.aiPhilosophy}"</p>
+                            <div className="flex gap-4">
+                              <a
+                                href={leader.linkedin}
+                                className="w-12 h-12 bg-[#1C7ED6] rounded-full flex items-center justify-center text-[#F1F3F5] hover:bg-[#1C7ED6]/80 transition-all duration-300 transform hover:scale-110 shadow-lg"
+                              >
+                                <Linkedin className="w-6 h-6" />
                               </a>
-                              <a href={`mailto:${leader.email}`} className="w-10 h-10 bg-gray-600 rounded-lg flex items-center justify-center text-white hover:bg-gray-700 transition-colors">
-                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                </svg>
+                              <a
+                                href={`mailto:${leader.email}`}
+                                className="w-12 h-12 bg-[#0B0F1C]/80 rounded-full flex items-center justify-center text-[#F1F3F5] hover:bg-[#0B0F1C]/50 transition-all duration-300 transform hover:scale-110 shadow-lg"
+                              >
+                                <Mail className="w-6 h-6" />
                               </a>
                             </div>
                           </div>
                         </div>
                         <div className="flex-1">
-                          <p className="text-gray-700 leading-relaxed text-lg">{leader.description}</p>
+                          <p className="text-[#F1F3F5]/60 leading-relaxed text-lg">{leader.description}</p>
                         </div>
                       </div>
                     ))}
@@ -346,38 +648,40 @@ export default function AboutPage() {
       </section>
 
       {/* Culture Section */}
-      <section className="py-24 bg-gradient-to-br from-blue-900 to-indigo-900 relative overflow-hidden">
-        <div className="absolute inset-0 bg-black/20"></div>
+      <section className="py-24 bg-[#0B0F1C] relative overflow-hidden">
+        <div className="absolute inset-0 bg-[#0B0F1C]/80"></div>
         <div className="container mx-auto px-6 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-8">
-              Join Our Journey
-            </h2>
-            <p className="text-xl text-blue-100 mb-12 leading-relaxed">
-              We're not just building a company—we're crafting the future. 
-              Every day brings new challenges, breakthrough moments, and opportunities to make a real impact.
+            <h2 className="text-5xl md:text-6xl font-bold text-[#F1F3F5] mb-8">Join Our Journey</h2>
+            <p className="text-xl text-[#F1F3F5]/70 mb-12 leading-relaxed">
+              We're not just building a company—we're crafting the future. Every day brings new challenges,
+              breakthrough moments, and opportunities to make a real impact.
             </p>
             <div className="grid md:grid-cols-2 gap-8 mb-12">
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-left">
-                <h3 className="text-xl font-bold text-white mb-3">For Innovators</h3>
-                <p className="text-blue-100">
-                  Work on cutting-edge AI projects that push the boundaries of what's possible. 
-                  Your ideas don't just matter—they shape our products.
+              <div className="bg-[#1C7ED6]/10 backdrop-blur-sm rounded-2xl p-6 text-left border border-[#1C7ED6]/20 hover:border-[#38D9A9] transition-colors duration-300 group">
+                <h3 className="text-xl font-bold text-[#F1F3F5] mb-3 group-hover:text-[#38D9A9] transition-colors">
+                  For Innovators
+                </h3>
+                <p className="text-[#F1F3F5]/70">
+                  Work on cutting-edge AI projects that push the boundaries of what's possible. Your ideas don't just
+                  matter—they shape our products.
                 </p>
               </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-left">
-                <h3 className="text-xl font-bold text-white mb-3">For Builders</h3>
-                <p className="text-blue-100">
-                  Turn ambitious visions into reality. Build systems that millions will use, 
-                  solve problems that matter, and see your impact in real-time.
+              <div className="bg-[#1C7ED6]/10 backdrop-blur-sm rounded-2xl p-6 text-left border border-[#1C7ED6]/20 hover:border-[#1C7ED6] transition-colors duration-300 group">
+                <h3 className="text-xl font-bold text-[#F1F3F5] mb-3 group-hover:text-[#1C7ED6] transition-colors">
+                  For Builders
+                </h3>
+                <p className="text-[#F1F3F5]/70">
+                  Turn ambitious visions into reality. Build systems that millions will use, solve problems that matter,
+                  and see your impact in real-time.
                 </p>
               </div>
             </div>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="px-8 py-4 bg-white text-blue-900 rounded-xl font-semibold hover:bg-gray-100 transition-colors shadow-lg">
+              <button className="px-8 py-4 bg-gradient-to-r from-[#1C7ED6] to-[#38D9A9] text-[#F1F3F5] rounded-xl font-semibold hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-2xl">
                 Explore Careers
               </button>
-              <button className="px-8 py-4 border-2 border-white/30 text-white rounded-xl font-semibold hover:bg-white/10 transition-colors backdrop-blur-sm">
+              <button className="px-8 py-4 border-2 border-[#1C7ED6] text-[#1C7ED6] rounded-xl font-semibold hover:bg-[#1C7ED6]/10 hover:border-[#38D9A9] transition-all duration-300 hover:scale-105">
                 Partner With Us
               </button>
             </div>
@@ -387,6 +691,6 @@ export default function AboutPage() {
 
       {/* CTA Section */}
       <CTASection />
-    </>
+    </div>
   );
 }
