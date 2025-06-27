@@ -2131,16 +2131,16 @@ const ContactSection: React.FC = () => {
                   <div className="flex items-center space-x-3">
                     <MapPin className="h-6 w-6 text-emerald-400" />
                     <p className="text-slate-100/80">
-                      123 Neural Hub, AI City, Tech Valley, 94043
+                      a-hub, Andhra University North Campus,Visakhapatnam,Andhra Pradesh 530003
                     </p>
                   </div>
                   <div className="flex items-center space-x-3">
                     <Phone className="h-6 w-6 text-emerald-400" />
-                    <p className="text-slate-100/80">+1 (800) 555-1234</p>
+                    <p className="text-slate-100/80">+91 9000633061</p>
                   </div>
                   <div className="flex items-center space-x-3">
                     <Mail className="h-6 w-6 text-emerald-400" />
-                    <p className="text-slate-100/80">connect@dharvix.ai</p>
+                    <p className="text-slate-100/80">info@dharvixtechsolutions.com</p>
                   </div>
                 </div>
                 <div className="mt-6 flex space-x-4">
